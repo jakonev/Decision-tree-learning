@@ -1,15 +1,17 @@
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
 
 dados = pd.read_csv('data_filtro.csv')
-CODNEG_filtrado = 'PCAR3'
+CODNEG_filtrado = 'RAIZ4'
 dados_filtrados = dados.query(f'CODNEG == "{CODNEG_filtrado}"')
 
 DIF_PRECO = dados_filtrados['PRE-ABE']
-dados['DIF_COTACAO'] = (dados_filtrados['PRE-ABE'].median() + dados_filtrados['PRE-ULT'].max() + dados_filtrados['PREMED'].median())
+dados['DIF_COTACAO'] = (dados_filtrados['PRE-ABE'].min() + dados_filtrados['PRE-ULT'].min() + dados_filtrados['PREMED'].min())
 
 # dados_filtrados['DIF_COTACAO'] = (dados_filtrados['PRE-ABE'] + dados_filtrados['PRE-ULT'] + dados_filtrados['PREMED']) / 3
 variaveis_filtradas = ['VOLT-TOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
@@ -40,4 +42,10 @@ else:
     # Visualizar a correlação
     print(f"Correlação PREMED e Último Preço: {correlacao_abertura:,.4f}")
 
-    print(X_train)
+
+    plt.figure(figsize=(10, 6))
+    sns.histplot(data=dados_filtrados[variaveis_filtradas], x='PREMED', hue=predicao, bins=20, kde=True)
+    plt.title(f'{CODNEG_filtrado}')
+    plt.xlabel('PRECO ULTIMO')
+    plt.ylabel('Frequência')
+    plt.show()

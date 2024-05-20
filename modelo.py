@@ -1,4 +1,6 @@
 import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
@@ -28,9 +30,6 @@ y = dados['PRE-ULT']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Treinar o modelo de classificação
-# modelo = RandomForestClassifier(n_estimators=100, random_state=42)
-# modelo.fit(X_train, y_train)
 modelo = DecisionTreeRegressor(random_state=42)
 modelo.fit(X_train, y_train)
 
@@ -47,5 +46,9 @@ for i, predicao in enumerate(previsoes):
 # Visualizar a correlação
 print(f"Correlação PREMED e Oferta Venda: {correlacao_abertura:,.4f}")
 
-
-print(y)
+plt.figure(figsize=(10, 6))
+sns.histplot(data=dados[variaveis], x='PREMED', hue=predicao, bins=20, kde=True)
+plt.title('PRECO MEDIO')
+plt.xlabel('COMPRA BEEF3')
+plt.ylabel('Frequência')
+plt.show()
