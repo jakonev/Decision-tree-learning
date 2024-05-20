@@ -47,5 +47,5 @@ for i, predicao in enumerate(previsoes):
 # Visualizar a correlação
 print(f"Correlação PREMED e Oferta Venda: {correlacao_abertura:,.4f}")
 
-print(X_train)
-print(dados)
+
+print(y)
