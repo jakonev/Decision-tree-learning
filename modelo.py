@@ -52,3 +52,20 @@ plt.title('PRECO MEDIO')
 plt.xlabel('COMPRA BEEF3')
 plt.ylabel('Frequência')
 plt.show()
+
+PREVISAO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+beef3 = previsoes
+
+# Criar figura e eixos
+fig, ax = plt.subplots()
+
+# Plotar os dados
+ax.plot(PREVISAO, beef3, label='BEEF3')
+
+# Mostrar os rótulos dos eixos e a legenda do gráfico
+ax.set_xlabel('Previsões')
+ax.set_ylabel('Preço(R$)')
+ax.legend()
+
+# Exibir o gráfico pronto
+plt.show()

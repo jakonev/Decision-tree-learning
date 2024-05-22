@@ -2,50 +2,117 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
 
-dados = pd.read_csv('data_filtro.csv')
-CODNEG_filtrado = 'RAIZ4'
-dados_filtrados = dados.query(f'CODNEG == "{CODNEG_filtrado}"')
+class DataLoader:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.dados = None
 
-DIF_PRECO = dados_filtrados['PRE-ABE']
-dados['DIF_COTACAO'] = (dados_filtrados['PRE-ABE'].min() + dados_filtrados['PRE-ULT'].min() + dados_filtrados['PREMED'].min())
+    def load_data(self):
+        self.dados = pd.read_csv(self.file_path)
 
-# dados_filtrados['DIF_COTACAO'] = (dados_filtrados['PRE-ABE'] + dados_filtrados['PRE-ULT'] + dados_filtrados['PREMED']) / 3
-variaveis_filtradas = ['VOLT-TOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
 
-if dados_filtrados.empty:
-    print(f"Não há dados disponíveis para CODNEG {CODNEG_filtrado}")
-else:
-    # Dividir os dados filtrados em conjunto de treinamento e teste
-    X = dados_filtrados[variaveis_filtradas]
-    y = dados_filtrados['PRE-ULT']
+class DataProcessor:
+    def __init__(self, dados):
+        self.dados = dados
+        self.dados_filtrados = None
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    def filter_data(self, codneg_filtrado):
+        self.dados_filtrados = self.dados.query(f'CODNEG == "{codneg_filtrado}"')
+        if self.dados_filtrados.empty:
+            raise ValueError(f"Não há dados disponíveis para CODNEG {codneg_filtrado}")
 
-    # Treinar o modelo de regressão
-    modelo = DecisionTreeRegressor(random_state=42)
-    modelo.fit(X_train, y_train)
+    def calculate_dif_cotacao(self):
+        self.dados['DIF_COTACAO'] = (
+                self.dados_filtrados['PRE-ABE'].min() +
+                self.dados_filtrados['PRE-ULT'].min() +
+                self.dados_filtrados['PREMED'].min()
+        )
 
-    # Fazer previsões no conjunto de teste
-    previsoes = modelo.predict(X_test)
 
-    # Avaliar a precisão do modelo
+class ModelTrainer:
+    def __init__(self, dados_filtrados, variaveis_filtradas, target='PRE-OFV'):
+        self.dados_filtrados = dados_filtrados
+        self.variaveis_filtradas = variaveis_filtradas
+        self.target = target
+        self.model = DecisionTreeRegressor(random_state=42)
+        self.X_train, self.X_test, self.y_train, self.y_test = None, None, None, None
 
-    # Calcular a correlação entre a variável PREMED e PRE-ULT
-    correlacao_abertura = dados_filtrados['PREMED'].corr(dados_filtrados['PRE-ULT'])
+    def split_data(self):
+        X = self.dados_filtrados[self.variaveis_filtradas]
+        y = self.dados_filtrados[self.target]
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    def train_model(self):
+        self.model.fit(self.X_train, self.y_train)
+
+    def predict(self):
+        return self.model.predict(self.X_test)
+
+    def calculate_correlation(self):
+        return self.dados_filtrados['PREMED'].corr(self.dados_filtrados['PRE-ULT'])
+
+
+class Plotter:
+    def __init__(self, dados_filtrados, variaveis_filtradas, predicoes, codneg_filtrado):
+        self.dados_filtrados = dados_filtrados
+        self.variaveis_filtradas = variaveis_filtradas
+        self.predicoes = predicoes
+        self.codneg_filtrado = codneg_filtrado
+
+    def plot_histogram(self):
+        plt.figure(figsize=(10, 6))
+        sns.histplot(self.dados_filtrados[self.variaveis_filtradas], x="PRE-ULT", hue=self.predicoes, element="step",
+                     kde=True)
+        plt.title(f'{self.codneg_filtrado}')
+        plt.xlabel(f'{self.codneg_filtrado}')
+        plt.ylabel('Frequência')
+        plt.show()
+
+
+def main():
+    # Parâmetros
+    file_path = 'data_filtro.csv'
+
+    codneg_filtrado = 'LWSA3'
+    variaveis_filtradas = ['VOLT-TOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
+
+    # Carregar dados
+    data_loader = DataLoader(file_path)
+    data_loader.load_data()
+
+    # Processar dados
+    data_processor = DataProcessor(data_loader.dados)
+    try:
+        data_processor.filter_data(codneg_filtrado)
+        data_processor.calculate_dif_cotacao()
+    except ValueError as e:
+        print(e)
+        return
+
+    # Treinar modelo
+    model_trainer = ModelTrainer(data_processor.dados_filtrados, variaveis_filtradas)
+    model_trainer.split_data()
+    model_trainer.train_model()
+
+    # Fazer previsões e calcular correlação
+    previsoes = model_trainer.predict()
+    correlacao_abertura = model_trainer.calculate_correlation()
+
     for i, predicao in enumerate(previsoes):
-        print(f"Resultado da previsão {i+1}: {predicao}")
+        print(f"Resultado da previsão {i + 1}: {predicao}")
 
-    # Visualizar a correlação
     print(f"Correlação PREMED e Último Preço: {correlacao_abertura:,.4f}")
 
-
+    # Plotar resultados
     plt.figure(figsize=(10, 6))
-    sns.histplot(data=dados_filtrados[variaveis_filtradas], x='PREMED', hue=predicao, bins=20, kde=True)
-    plt.title(f'{CODNEG_filtrado}')
-    plt.xlabel('PRECO ULTIMO')
+    sns.histplot(data=data_processor.dados_filtrados, x='PREMED', hue=predicao, bins=20, kde=True)
+    plt.title('PRECO MEDIO')
+    plt.xlabel(f'{codneg_filtrado}')
     plt.ylabel('Frequência')
     plt.show()
+
+if __name__ == "__main__":
+    main()
