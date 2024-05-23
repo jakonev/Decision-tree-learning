@@ -28,7 +28,7 @@ class DataProcessor:
         self.dados['DIF_COTACAO'] = (
                 self.dados_filtrados['PRE-ABE'].min() +
                 self.dados_filtrados['PRE-ULT'].min() +
-                self.dados_filtrados['PREMED'].min()
+                self.dados_filtrados['PREMED']
         )
 
 
@@ -76,7 +76,7 @@ def main():
     # Parâmetros
     file_path = 'data_filtro.csv'
 
-    codneg_filtrado = 'LWSA3'
+    codneg_filtrado = 'RAIZ4'
     variaveis_filtradas = ['VOLT-TOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
 
     # Carregar dados
