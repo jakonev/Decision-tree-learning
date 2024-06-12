@@ -1,11 +1,22 @@
+from datetime import datetime, timezone
+
 import pandas as pd
+import requests
+
+
 class DataLoader:
-    def __init__(self, file_path):
-        self.file_path = file_path
+    def __init__(self, url, headers, params):
+        self.url = url
+        self.headers = headers
+        self.params = params
         self.dados = None
 
     def load_data(self):
-        self.dados = pd.read_csv(self.file_path)
+        response = requests.get(self.url, headers=self.headers, params=self.params)
+        if response.status_code == 200:
+            self.dados = pd.DataFrame(response.json())
+        else:
+            response.raise_for_status()
 
 
 class DataProcessor:
@@ -23,13 +34,30 @@ class DataProcessor:
         preUltm = self.dados_filtrados['PRE-ULT'].max()
         preMed = self.dados_filtrados['PREMED'].median()
 
-        return print(f'Preco Abertura Min: {preAbert} | Preco Ultimo Max: {preUltm} | Preco Med: {preMed}')
+        return print(f'| Preco Abertura Min: {preAbert} | Preco Ultimo Max: {preUltm} | Preco Med: {preMed}')
 
-def main():
-    file_path = 'data_filtro.csv'
-    codneg_filtrado = 'RAIZ4'
-    data_loader = DataLoader(file_path)
+
+def calculos():
+    # Parâmetros da API NAO ESTRAGAR A BASE DO REST
+    # DO NOT CHANGE THE GET API METHOD AND THE BASE PLEASE
+    url = "https://cotahist-2f8e.restdb.io/rest/cota-hist"
+    headers = {
+        'content-type': "application/json",
+        'x-apikey': "a78a2fe211a7547f5fc7f323bf8ed3a99651a",
+        'cache-control': "no-cache"
+    }
+    params = {'_id': type, 'CODNEG': '', 'PRE-ABE': float, 'PRE-ULT': float, 'PRE-OFV': float, 'PREMED': float, 'VOLT-TOT': float,
+              'DATA_PREGAO': ''}
+
+    # Parâmetros de filtro e variáveis
+    codneg_filtrado = 'PETR4'
+    variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
+
+    # Carregar dados
+    data_loader = DataLoader(url, headers, params)
     data_loader.load_data()
+
+    # Processar dados
     data_processor = DataProcessor(data_loader.dados)
 
     try:
@@ -42,4 +70,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    calculos()

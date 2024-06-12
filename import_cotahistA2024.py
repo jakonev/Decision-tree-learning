@@ -1,3 +1,4 @@
+import requests
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -6,12 +7,18 @@ from sklearn.tree import DecisionTreeRegressor
 
 
 class DataLoader:
-    def __init__(self, file_path):
-        self.file_path = file_path
+    def __init__(self, url, headers, params):
+        self.url = url
+        self.headers = headers
+        self.params = params
         self.dados = None
 
     def load_data(self):
-        self.dados = pd.read_csv(self.file_path)
+        response = requests.get(self.url, headers=self.headers, params=self.params)
+        if response.status_code == 200:
+            self.dados = pd.DataFrame(response.json())
+        else:
+            response.raise_for_status()
 
 
 class DataProcessor:
@@ -28,7 +35,7 @@ class DataProcessor:
         self.dados['DIF_COTACAO'] = (
                 self.dados_filtrados['PRE-ABE'].min() +
                 self.dados_filtrados['PRE-ULT'].min() +
-                self.dados_filtrados['PREMED']
+                self.dados_filtrados['PREMED'].min()
         )
 
 
@@ -72,15 +79,24 @@ class Plotter:
         plt.show()
 
 
-def main():
-    # Parâmetros
-    file_path = 'data_filtro.csv'
+def resultados():
+    # Parâmetros da API NAO ESTRAGAR A BASE DO REST
+    # DO NOT CHANGE THE GET API METHOD AND THE BASE PLEASE
+    url = "https://cotahist-2f8e.restdb.io/rest/cota-hist"
+    headers = {
+        'content-type': "application/json",
+        'x-apikey': "a78a2fe211a7547f5fc7f323bf8ed3a99651a",
+        'cache-control': "no-cache"
+    }
+    params = {'_id': type, 'CODNEG': '', 'PRE-ABE': float, 'PRE-ULT': float, 'PRE-OFV': float, 'PREMED': float, 'VOLT-TOT': float,
+              'DATA_PREGAO': ''}
 
-    codneg_filtrado = 'PCAR3'
-    variaveis_filtradas = ['VOLT-TOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
+    # Parâmetros de filtro e variáveis
+    codneg_filtrado = 'PETR4'
+    variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
 
     # Carregar dados
-    data_loader = DataLoader(file_path)
+    data_loader = DataLoader(url, headers, params)
     data_loader.load_data()
 
     # Processar dados
@@ -107,12 +123,13 @@ def main():
     print(f"Correlação PREMED e Último Preço: {correlacao_abertura:,.4f}")
 
     # Plotar resultados
-    # plt.figure(figsize=(10, 6))
-    # sns.histplot(data=data_processor.dados_filtrados, x='PREMED', hue=predicao, bins=20, kde=True)
-    # plt.title('PRECO MEDIO')
-    # plt.xlabel(f'{codneg_filtrado}')
-    # plt.ylabel('Frequência')
-    # plt.show()
+    plt.figure(figsize=(10, 6))
+    sns.histplot(data_processor.dados_filtrados, x='PREMED', hue=predicao, bins=20, kde=True)
+    plt.title('PRECO MEDIO')
+    plt.xlabel(f'{codneg_filtrado}')
+    plt.ylabel('Frequência')
+    plt.show()
+
 
 if __name__ == "__main__":
-    main()
+    resultados()
