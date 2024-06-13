@@ -29,12 +29,14 @@ class DataProcessor:
         if self.dados_filtrados.empty:
             raise ValueError(f"Não há dados disponíveis para CODNEG {codneg_filtrado}")
 
-    def calcula_statistic(self, preAbert, preUltm, preMed):
+    def calcula_statistic(self, atualizacao, preAbert, preUltm, preMed):
         preAbert = self.dados_filtrados['PRE-ABE'].min()
         preUltm = self.dados_filtrados['PRE-ULT'].max()
         preMed = self.dados_filtrados['PREMED'].median()
 
-        return print(f'| Preco Abertura Min: {preAbert} | Preco Ultimo Max: {preUltm} | Preco Med: {preMed}')
+
+
+        return print(f'| Atualizado em {atualizacao}| Preco Abertura Min: {preAbert} | Preco Ultimo Max: {preUltm} | Preco Med: {preMed}')
 
 
 def calculos():
@@ -47,7 +49,7 @@ def calculos():
         'cache-control': "no-cache"
     }
     params = {'_id': type, 'CODNEG': '', 'PRE-ABE': float, 'PRE-ULT': float, 'PRE-OFV': float, 'PREMED': float, 'VOLT-TOT': float,
-              'DATA_PREGAO': ''}
+              'DATA_PREGAO': datetime.timetz}
 
     # Parâmetros de filtro e variáveis
     codneg_filtrado = 'PETR4'
@@ -62,7 +64,8 @@ def calculos():
 
     try:
         data_processor.filter_data(codneg_filtrado)
-        data_processor.calcula_statistic(preAbert=None, preUltm=None, preMed=None)
+        data_atualizacao = data_processor.dados_filtrados['DATA_PREGAO'].max()
+        data_processor.calcula_statistic(atualizacao=data_atualizacao, preAbert=None, preUltm=None, preMed=None)
 
     except ValueError as e:
         print(e)
