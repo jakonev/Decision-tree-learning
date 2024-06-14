@@ -52,7 +52,7 @@ def calculos():
               'DATA_PREGAO': datetime.timetz}
 
     # Parâmetros de filtro e variáveis
-    codneg_filtrado = 'PETR4'
+    codneg_filtrado = 'PETR3'
     variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
 
     # Carregar dados

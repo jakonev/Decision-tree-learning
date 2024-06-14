@@ -92,7 +92,7 @@ def resultados():
               'DATA_PREGAO': ''}
 
     # Parâmetros de filtro e variáveis
-    codneg_filtrado = 'BEEF3'
+    codneg_filtrado = 'CMIN3'
     variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
 
     # Carregar dados
