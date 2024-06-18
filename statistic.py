@@ -52,8 +52,8 @@ def calculos():
               'DATA_PREGAO': datetime.timetz}
 
     # Parâmetros de filtro e variáveis
-    codneg_filtrado = 'PETR3'
-    variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
+    codneg_filtrado = 'CVCB3'
+    variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE', 'DATA_PREGAO']
 
     # Carregar dados
     data_loader = DataLoader(url, headers, params)
@@ -64,7 +64,8 @@ def calculos():
 
     try:
         data_processor.filter_data(codneg_filtrado)
-        data_atualizacao = data_processor.dados_filtrados['DATA_PREGAO'].max()
+        data_atualiza = data_processor.dados_filtrados['DATA_PREGAO'].max()
+        data_atualizacao = (data_atualiza.replace('T', ' ').replace('Z', ' '))
         data_processor.calcula_statistic(atualizacao=data_atualizacao, preAbert=None, preUltm=None, preMed=None)
 
     except ValueError as e:
