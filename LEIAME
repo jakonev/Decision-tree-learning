@@ -1,6 +1,5 @@
 1 download em:
 https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/
-
 do modelo da sua cotacao diaria, historica, mensal, anual
 
 2 importar power bi para transformar o arquivo
@@ -8,14 +7,11 @@ ou copiar o código M e colar em uma nova consulta em branco / nula e aceitar
 
 3 filtrar os papeis, periodo ou caso queira utilize o banco de dados inteiro, pode conectar via shemma
 
-4 salve um CSV no formato modelo abaixo ","; datetime:
-
 CODNEG,PRE-ABE,PRE-ULT,DATA_PREGAO,01 %,02 DIF
 BEEF3,6.13,6.10,2024-04-01 00:00:00,10.0,10.19
 
-5 rode o modelo.
-CRIADO UM METODO QUE EXCECUTA O CODIGO COM METODO GET ELIMINANDO O DATA_FILTRO.CSV
-
-IMPORT_COTAHISTA2024 e um METODO GET DA BASE RESTDB TEM APIKEY NAO ALETERE A BASE NAO ALTERAR A BASE OBRIGADO
+4 IMPORT_COTAHISTA2024 e um METODO GET DA BASE RESTDB TEM APIKEY NAO ALETERE A BASE NAO ALTERAR A BASE OBRIGADO
 
 DO NOT CHANGE THE GET API METHOD AND THE BASE PLEASE IN RESTDB.IO TANK YOU BROTHER
+
+AQUI NAO TEM MÁQUINA EM CIMA DA MESA !!!
