@@ -11,6 +11,6 @@ class GeradorPrevisao:
         ultimo_dia_mes = data_atual.day
 
         # Criar a lista de dias do mês até o dia atual
-        PREVISAO = list(range(1, ultimo_dia_mes + 3))
+        PREVISAO = list(range(1, ultimo_dia_mes))
 
         return PREVISAO
