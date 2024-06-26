@@ -33,10 +33,11 @@ class DataProcessor:
         preAbert = self.dados_filtrados['PRE-ABE'].min()
         preUltm = self.dados_filtrados['PRE-ULT'].max()
         preMed = self.dados_filtrados['PREMED'].median()
+        preMedmin = self.dados_filtrados['PREMED'].min()
 
 
 
-        return print(f'| Atualizado em {atualizacao}| Preco Abertura Min: {preAbert} | Preco Ultimo Max: {preUltm} | Preco Med: {preMed}')
+        return print(f'| Atualizado em {atualizacao}| Preco Abertura Min: {preAbert} | Preco Media Minimo: {preMedmin} | Preco Ultimo Max: {preUltm} | Preco Med: {preMed}')
 
 
 def calculos():
@@ -52,7 +53,7 @@ def calculos():
               'DATA_PREGAO': datetime.timetz}
 
     # Parâmetros de filtro e variáveis
-    codneg_filtrado = 'HBSA3'
+    codneg_filtrado = 'CVCB3'
     variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE', 'DATA_PREGAO']
 
     # Carregar dados
