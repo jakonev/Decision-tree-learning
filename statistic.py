@@ -53,7 +53,7 @@ def calculos():
               'DATA_PREGAO': datetime.timetz}
 
     # Parâmetros de filtro e variáveis
-    codneg_filtrado = 'USIM5'
+    codneg_filtrado = 'BEEF3'
     variaveis_filtradas = ['VOLTOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE', 'DATA_PREGAO']
 
     # Carregar dados
