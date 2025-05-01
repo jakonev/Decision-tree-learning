@@ -76,7 +76,7 @@ def main():
     # Parâmetros
     file_path = 'data_filtro.csv'
 
-    codneg_filtrado = 'RAIZ4'
+    codneg_filtrado = 'CBAV3'
     variaveis_filtradas = ['VOLT-TOT', 'PREMED', 'PRE-OFV', 'PRE-ULT', 'PRE-ABE']
 
     # Carregar dados
